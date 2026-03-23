@@ -1,0 +1,54 @@
+<mujoco model="h1_super_stable">
+    <compiler angle="radian" meshdir="assets/" autolimits="true"/>
+    <option timestep="0.001" integrator="RK4">
+        <flag energy="enable" contact="enable"/>
+    </option>
+
+    <worldbody>
+        <light pos="0 0 3" dir="0 0 -1" diffuse="1 1 1"/>
+        <geom name="floor" type="plane" size="5 5 0.1" rgba="0.2 0.2 0.2 1"/>
+        <body name="table" pos="1.5 0 0.76">
+            <geom type="box" size="1.37 0.76 0.02" rgba="0.1 0.3 0.1 1" friction="0.1"/>
+            <body name="net" pos="0 0 0.08"><geom type="box" size="0.01 0.76 0.08" rgba="1 1 1 0.4"/></body>
+        </body>
+
+        <body name="base" pos="0 0 0.1">
+            <geom type="box" size="0.2 0.2 0.05" rgba="0.3 0.3 0.3 1"/>
+            <joint name="y_slide_joint" type="slide" axis="0 1 0" range="-0.8 0.8" damping="1000" armature="0.5"/>
+            <body name="torso" pos="0 0 1.18">
+                <joint name="waist_yaw_joint" type="hinge" axis="0 0 1" range="-1.5 1.5" damping="500" armature="0.2"/>
+                <geom type="cylinder" size="0.15 0.2" rgba="0.5 0.5 0.5 1"/>
+                <body name="right_arm_root" pos="0.1 -0.2 0">
+                    <geom type="sphere" size="0.04" rgba="0.4 0.4 0.4 1"/>
+                    <joint name="r_joint_yaw" type="hinge" axis="0 0 1" range="-2.0 2.0" damping="100"/>
+                    <body name="r_shoulder" pos="0 0 0">
+                        <geom type="sphere" size="0.04" rgba="0.4 0.4 0.4 1"/>
+                        <joint name="r_joint_pitch" type="hinge" axis="0 1 0" range="-2.0 2.0" damping="100"/>
+                        <body name="r_elbow" pos="0.3 0 0">
+                            <geom type="capsule" size="0.04 0.15" euler="0 1.57 0" rgba="0.5 0.5 0.5 1"/>
+                            <joint name="r_joint2" type="hinge" axis="0 1 0" range="-2.0 2.0" damping="100"/>
+                            <body name="paddle_link" pos="0.2 0 0">
+                                <joint name="r_slide" type="slide" axis="1 0 0" range="0 0.4" damping="50"/>
+                                <geom name="paddle" type="cylinder" size="0.15 0.01" euler="0 1.57 0" rgba="0.8 0.1 0.1 1" friction="1.0"/>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+
+        <body name="ball" pos="2.5 0 1.3">
+            <joint name="ball_joint" type="free"/>
+            <geom name="ball_geom" type="sphere" size="0.02" rgba="1 0.6 0 1" friction="0.1"/>
+        </body>
+    </worldbody>
+
+    <actuator>
+        <general name="s_rot"  joint="waist_yaw_joint" gainprm="8000" biasprm="0 -8000" biastype="affine" forcerange="-200 200" forcelimited="true" dyntype="filter" dynprm="0.1"/>
+        <general name="s_base" joint="y_slide_joint"  gainprm="12000" biasprm="0 -12000" biastype="affine" forcerange="-400 400" forcelimited="true" dyntype="filter" dynprm="0.1"/>
+        <general name="s0"     joint="r_joint_yaw"     gainprm="4000"  biasprm="0 -4000"  biastype="affine" forcerange="-100 100" forcelimited="true" dyntype="filter" dynprm="0.1"/>
+        <general name="s1"     joint="r_joint_pitch"   gainprm="4000"  biasprm="0 -4000"  biastype="affine" forcerange="-100 100" forcelimited="true" dyntype="filter" dynprm="0.1"/>
+        <general name="s2"     joint="r_joint2"        gainprm="2000"  biasprm="0 -2000"  biastype="affine" forcerange="-80 80"   forcelimited="true" dyntype="filter" dynprm="0.1"/>
+        <general name="s3"     joint="r_slide"         gainprm="2000"  biasprm="0 -2000"  biastype="affine" forcerange="-80 80"   forcelimited="true" dyntype="filter" dynprm="0.1"/>
+    </actuator>
+</mujoco>
